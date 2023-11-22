@@ -29,6 +29,8 @@ import { StepManagerService } from './services/step-manager.service';
 export class NgFlowchartCanvasDirective
   implements OnInit, OnDestroy, AfterViewInit
 {
+   @Input('callbackFunction') callbackFunction: (data: any) => void;
+
   @HostListener('drop', ['$event'])
   protected onDrop(event: DragEvent) {
     if (this._disabled) {
@@ -75,6 +77,8 @@ export class NgFlowchartCanvasDirective
   pos = { top: 0, left: 0, x: 0, y: 0 };
   @HostListener('mousedown', ['$event'])
   protected canvasDragScroll(e: MouseEvent) {
+     this.callbackFunction?.(e);
+
     var validDragAnchor =
       e.target === this.canvasContent ||
       e.target === this.canvasEle.nativeElement;
@@ -117,6 +121,11 @@ export class NgFlowchartCanvasDirective
 
   @Input()
   set ngFlowchartCallbacks(callbacks: NgFlowchart.Callbacks) {
+    this.optionService.setCallbacks(callbacks);
+  }
+
+  @Input()
+  set setMouseDownCallBack(callbacks: NgFlowchart.Callbacks) {
     this.optionService.setCallbacks(callbacks);
   }
 
