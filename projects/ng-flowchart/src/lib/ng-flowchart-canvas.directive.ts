@@ -140,14 +140,6 @@ export class NgFlowchartCanvasDirective
     return this._options;
   }
 
-  @Input()
-  @HostBinding('attr.disabled')
-  set disabled(val: boolean) {
-    this._disabled = val !== false;
-    if (this.canvas) {
-      this.canvas._disabled = this._disabled;
-    }
-  }
 
   get disabled() {
     return this._disabled;
