@@ -19,6 +19,5 @@ export class FormStepComponent
   }
 
   ngOnInit(): void {
-    console.log(this.data);
-  }
+   }
 }

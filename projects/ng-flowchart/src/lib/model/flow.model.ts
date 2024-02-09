@@ -92,7 +92,7 @@ export namespace NgFlowchart {
       skipRender?: boolean;
     } = {
       mode: 'WHEEL',
-      defaultStep: 0.1,
+      defaultStep: 0.01,
       skipRender: false,
     };
 
