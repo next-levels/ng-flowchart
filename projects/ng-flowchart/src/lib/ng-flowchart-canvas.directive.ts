@@ -170,6 +170,8 @@ export class NgFlowchartCanvasDirective
 
     this.canvas._disabled = this._disabled;
 
+    this.setScale(0.8);
+
     this.handleWindowResize();
   }
 
