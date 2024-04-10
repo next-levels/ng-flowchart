@@ -114,9 +114,10 @@ export class NgFlowchartCanvasService {
   public moveStep(drag: DragEvent, id: any) {
     this.renderer.clearAllSnapIndicators(this.flow.steps);
 
-    let step: NgFlowchartStepComponent = this.flow.steps.find(
+    const step: NgFlowchartStepComponent = this.flow.steps.find(
       step => step.nativeElement.id === id
     );
+
     let error = {};
     if (!step) {
       // step cannot be moved if not in this canvas
@@ -124,18 +125,24 @@ export class NgFlowchartCanvasService {
     }
     if (step.canDrop(this.currentDropTarget, error)) {
       if (step.isRootElement()) {
+        console.log('1')
         this.renderer.updatePosition(step, drag);
         this.renderer.render(this.flow);
       } else if (this.currentDropTarget) {
+        console.log('2')
         const response = this.addStepToFlow(step, this.currentDropTarget, true);
         this.renderer.render(this.flow, response.prettyRender);
       } else {
-        this.moveError(step, this.noParentError);
+        console.log('3')
+        this.renderer.updatePosition(step, drag);
+        this.renderer.render(this.flow);
       }
       if (
         this.options.callbacks?.onDropStep &&
         (this.currentDropTarget || step.isRootElement())
       ) {
+        console.log('4')
+
         this.options.callbacks.onDropStep({
           isMove: true,
           step: step,

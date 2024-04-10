@@ -21,6 +21,7 @@ export class NgFlowchartStepDirective implements AfterViewInit {
 
   @HostListener('dragend', ['$event'])
   onDragEnd(event: DragEvent) {
+    console.log('dragend', event)
     this.data.setDragStep(null);
   }
 

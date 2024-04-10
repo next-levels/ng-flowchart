@@ -68,7 +68,11 @@ export class CanvasRendererService {
     let relativeXY = this.getRelativeXY(dragEvent);
 
     relativeXY = relativeXY.map(coord => coord / this.scale);
-    step.zsetPosition(relativeXY, true);
+    step.zsetPosition(relativeXY);
+    console.log(step)
+
+    this.cdr.detectChanges();
+
   }
 
   private getStepGap() {
@@ -149,6 +153,7 @@ export class CanvasRendererService {
     canvasRect: DOMRect
   ) {
     //the rootNode passed in is already rendered. just need to render its children /subtree
+   // console.log('renderHorizontalChildTree', rootNode, rootRect, canvasRect)
 
     if (!rootNode.hasChildren()) {
       return;
@@ -198,12 +203,11 @@ export class CanvasRendererService {
 
       const childHeight = currentChildRect.height / this.scale;
 
+      // console.log(child.currentPosition)
+
       child.zdrawArrow(
-        [rootRight, rootYCenter],
-        [
-          currentChildRect.left - canvasRect.left,
-          currentChildRect.top + childHeight / 2 - canvasRect.top,
-        ]
+        child.parent.currentPosition,
+        child.currentPosition
       );
 
       this.renderHorizontalChildTree(child, currentChildRect, canvasRect);

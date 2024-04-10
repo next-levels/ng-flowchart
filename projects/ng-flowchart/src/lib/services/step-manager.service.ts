@@ -5,11 +5,12 @@ import {
   Type,
   ViewContainerRef,
 } from '@angular/core';
-import { NgFlowchart } from '../model/flow.model';
-import { NgFlowchartCanvasService } from '../ng-flowchart-canvas.service';
-import { NgFlowchartStepRegistry } from '../ng-flowchart-step-registry.service';
-import { NgFlowchartStepComponent } from '../ng-flowchart-step/ng-flowchart-step.component';
-import { DropDataService } from './dropdata.service';
+import {NgFlowchart} from '../model/flow.model';
+import {NgFlowchartCanvasService} from '../ng-flowchart-canvas.service';
+import {NgFlowchartStepRegistry} from '../ng-flowchart-step-registry.service';
+import {NgFlowchartStepComponent} from '../ng-flowchart-step/ng-flowchart-step.component';
+import {DropDataService} from './dropdata.service';
+import {DragDrop} from "@angular/cdk/drag-drop";
 
 /**
  * This service handles adding new steps to the canvas
@@ -18,7 +19,11 @@ import { DropDataService } from './dropdata.service';
 export class StepManagerService {
   private viewContainer: ViewContainerRef;
 
-  constructor(private registry: NgFlowchartStepRegistry) {}
+  constructor(
+    private registry: NgFlowchartStepRegistry,
+    private dragDrop: DragDrop
+  ) {
+  }
 
   public init(viewContainer: ViewContainerRef) {
     this.viewContainer = viewContainer;
@@ -53,12 +58,10 @@ export class StepManagerService {
     pendingStep: NgFlowchart.PendingStep,
     canvas: NgFlowchartCanvasService
   ): ComponentRef<NgFlowchartStepComponent> {
-    let componentRef: ComponentRef<NgFlowchartStepComponent>;
+    let componentRef = this.viewContainer.createComponent(NgFlowchartStepComponent);
 
+    // If the pendingStep template is an instance of TemplateRef, set it as the contentTemplate
     if (pendingStep.template instanceof TemplateRef) {
-      componentRef = this.viewContainer.createComponent(
-        NgFlowchartStepComponent
-      );
       componentRef.instance.contentTemplate = pendingStep.template;
     } else {
       componentRef = this.viewContainer.createComponent(pendingStep.template);
@@ -66,11 +69,11 @@ export class StepManagerService {
 
     componentRef.instance.data = JSON.parse(JSON.stringify(pendingStep.data));
     componentRef.instance.type = pendingStep.type;
-    componentRef.instance.canvas = canvas;
-    componentRef.instance.compRef = componentRef;
+     componentRef.instance.compRef = componentRef;
     componentRef.instance.init(
       componentRef.injector.get(DropDataService),
-      componentRef.injector.get(ViewContainerRef)
+      componentRef.injector.get(ViewContainerRef),
+      canvas
     );
 
     return componentRef;

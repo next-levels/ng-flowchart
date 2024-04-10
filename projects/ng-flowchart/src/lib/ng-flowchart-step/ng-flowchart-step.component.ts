@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  AfterViewInit, ChangeDetectionStrategy,
   Component,
   ComponentRef,
   ElementRef,
@@ -8,7 +8,7 @@ import {
   Injector,
   Input,
   OnInit,
-  Output,
+  Output, Renderer2,
   TemplateRef,
   ViewChild,
   ViewContainerRef,
@@ -20,6 +20,7 @@ import { NgFlowchartArrowComponent } from '../ng-flowchart-arrow/ng-flowchart-ar
 import { NgFlowchartCanvasService } from '../ng-flowchart-canvas.service';
 import { NgFlowchartConnectorPadComponent } from '../ng-flowchart-connector-pad/ng-flowchart-connector-pad.component';
 import { DropDataService } from '../services/dropdata.service';
+import {CdkDrag} from "@angular/cdk/drag-drop";
 
 export type AddChildOptions = {
   /** Should the child be added as a sibling to existing children, if false the existing children will be reparented to this new child.
@@ -42,7 +43,7 @@ export class NgFlowchartStepComponent<T = any>
   implements OnInit, AfterViewInit
 {
   @HostListener('dragstart', ['$event'])
-  onMoveStart(event: DragEvent) {
+  onMoveStart(event: any) {
     if (this.canvas.disabled) {
       return;
     }
@@ -64,6 +65,17 @@ export class NgFlowchartStepComponent<T = any>
   @HostListener('dragend', ['$event'])
   onMoveEnd(event: DragEvent) {
     this.showTree();
+  }
+
+  @HostListener('drag', ['$event'])
+  onDrag(event: any) {
+
+    if (this.canvas.disabled) {
+      return;
+    }
+
+     //console.log(event)
+     this.canvas.moveStep(event.event, this.id);
   }
 
   @HostListener('mouseenter', ['$event'])
@@ -118,7 +130,7 @@ export class NgFlowchartStepComponent<T = any>
   contentTemplate: TemplateRef<any>;
 
   private _id: any;
-  private _currentPosition = [0, 0];
+  protected _currentPosition = [0, 0];
 
   //only used if something tries to set the position before view has been initialized
   private _initPosition;
@@ -135,9 +147,11 @@ export class NgFlowchartStepComponent<T = any>
     this._children = [];
   }
 
-  init(drop, viewContainer) {
+  init(drop, viewContainer,canvas) {
     this.drop = drop;
     this.viewContainer = viewContainer;
+    this.canvas = canvas;
+    //console.log(canvas)
   }
 
   canDeleteStep(): boolean {
@@ -181,7 +195,9 @@ export class NgFlowchartStepComponent<T = any>
     return canDropAbove;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+  }
 
   ngAfterViewInit() {
     if (!this.nativeElement) {
@@ -189,10 +205,11 @@ export class NgFlowchartStepComponent<T = any>
     }
 
     this.nativeElement.classList.add('ngflowchart-step-wrapper');
-    if (this.canvas.options.options.orientation === 'HORIZONTAL') {
+    if (this.canvas && this.canvas.options.options.orientation === 'HORIZONTAL') {
       this.nativeElement.classList.add('horizontal');
     }
-    this.nativeElement.setAttribute('draggable', 'true');
+   // this.nativeElement.setAttribute('draggable', 'true');
+
 
     if (this._initPosition) {
       this.zsetPosition(this._initPosition);
@@ -434,6 +451,7 @@ export class NgFlowchartStepComponent<T = any>
     return {
       id: this.id,
       type: this.type,
+      pos: this.currentPosition,
       data: this.data,
       children: this.hasChildren()
         ? this._children.map(child => {
@@ -460,19 +478,22 @@ export class NgFlowchartStepComponent<T = any>
       return;
     }
 
-    let adjustedX = Math.max(
+    const adjustedX = Math.max(
       pos[0] - (offsetCenter ? this.nativeElement.offsetWidth / 2 : 0),
       0
     );
-    let adjustedY = Math.max(
+    const adjustedY = Math.max(
       pos[1] - (offsetCenter ? this.nativeElement.offsetHeight / 2 : 0),
       0
     );
+
 
     this.nativeElement.style.left = `${adjustedX}px`;
     this.nativeElement.style.top = `${adjustedY}px`;
 
     this._currentPosition = [adjustedX, adjustedY];
+
+    console.log(this._currentPosition)
   }
 
   zaddChild0(newChild: NgFlowchartStepComponent): boolean {
@@ -557,11 +578,12 @@ export class NgFlowchartStepComponent<T = any>
     if (!this.arrow) {
       this.createArrow();
     }
+    // console.log(end)
     this.arrow.instance.position = {
       start: start,
       end: end,
     };
-  }
+   }
 
   ////////////////////////
   // PRIVATE IMPL

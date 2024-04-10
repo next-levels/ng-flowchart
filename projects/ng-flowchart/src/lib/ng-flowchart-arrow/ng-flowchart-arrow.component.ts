@@ -21,6 +21,7 @@ export class NgFlowchartArrowComponent implements OnInit, AfterViewInit {
   @Input()
   set position(pos: { start: number[]; end: number[] }) {
     this._position = pos;
+    console.log('pos', pos)
 
     if (this.options.options.orientation === 'VERTICAL') {
       this.isLeftFlowing = pos.start[0] > pos.end[0];
@@ -84,7 +85,7 @@ export class NgFlowchartArrowComponent implements OnInit, AfterViewInit {
         this.arrow.nativeElement.setAttribute(
           'd',
           `
-        M${this.containerWidth - this.padding} 0 
+        M${this.containerWidth - this.padding} 0
         L${this.containerWidth - this.padding} ${this.containerHeight / 2}
         L${this.padding} ${this.containerHeight / 2}
         L${this.padding} ${this.containerHeight - 4}
@@ -94,7 +95,7 @@ export class NgFlowchartArrowComponent implements OnInit, AfterViewInit {
         this.arrow.nativeElement.setAttribute(
           'd',
           `
-        M${this.padding} 0 
+        M${this.padding} 0
         L${this.padding} ${this.containerHeight / 2}
         L${this.containerWidth - this.padding} ${this.containerHeight / 2}
         L${this.containerWidth - this.padding} ${this.containerHeight - 4}

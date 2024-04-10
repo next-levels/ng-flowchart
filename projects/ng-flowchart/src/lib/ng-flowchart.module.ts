@@ -7,6 +7,9 @@ import { NgFlowchartStepComponent } from './ng-flowchart-step/ng-flowchart-step.
 import { NgFlowchartConnectorComponent } from './ng-flowchart-connector/ng-flowchart-connector.component';
 import { NgFlowchartConnectorPadComponent } from './ng-flowchart-connector-pad/ng-flowchart-connector-pad.component';
 import { NgFlowchartPadArrowComponent } from './ng-flowchart-pad-arrow/ng-flowchart-pad-arrow.component';
+import {CdkDrag} from "@angular/cdk/drag-drop";
+import {MatIcon} from "@angular/material/icon";
+import {MatIconButton} from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -18,7 +21,7 @@ import { NgFlowchartPadArrowComponent } from './ng-flowchart-pad-arrow/ng-flowch
     NgFlowchartConnectorPadComponent,
     NgFlowchartPadArrowComponent,
   ],
-  imports: [CommonModule],
+  imports: [CommonModule, CdkDrag, MatIcon, MatIconButton],
   exports: [NgFlowchartCanvasDirective, NgFlowchartStepDirective],
 })
 export class NgFlowchartModule {}

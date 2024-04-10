@@ -33,6 +33,7 @@ export class NgFlowchartCanvasDirective
 
   @HostListener('drop', ['$event'])
   protected onDrop(event: DragEvent) {
+    console.log('drop', event)
     if (this._disabled) {
       return;
     }
@@ -61,7 +62,7 @@ export class NgFlowchartCanvasDirective
     if (this._disabled) {
       return;
     }
-    this.canvas.onDragStart(event);
+  this.canvas.onDragStart(event);
   }
 
   _options: NgFlowchart.Options;
@@ -76,8 +77,9 @@ export class NgFlowchartCanvasDirective
 
   pos = { top: 0, left: 0, x: 0, y: 0 };
   @HostListener('mousedown', ['$event'])
-  protected canvasDragScroll(e: MouseEvent) {
-     this.callbackFunction?.(e);
+  protected canvasDragScroll(e: DragEvent) {
+
+    this.callbackFunction?.(e);
 
     var validDragAnchor =
       e.target === this.canvasContent ||
@@ -171,7 +173,7 @@ export class NgFlowchartCanvasDirective
 
     this.canvas._disabled = this._disabled;
 
-    this.setScale(0.8);
+    this.setScale(1);
 
     this.handleWindowResize();
   }
